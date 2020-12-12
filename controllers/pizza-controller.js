@@ -5,6 +5,15 @@ const pizzaController = {
     getAllPizza(req, res) {
     // Mongoose find method (like findAll in Sequelize)
       Pizza.find({})
+      // Fetch comments with the fetched pizzas
+      .populate({
+        path: 'comments',
+        // Do not return the __v field
+        select: '-__v'
+      })
+        .select('-__v')
+        // Return newest pizza first (sort in descending order by id value)
+        .sort({ _id: -1 })
         .then(dbPizzaData => res.json(dbPizzaData))
         .catch(err => {
           console.log(err);
@@ -15,18 +24,22 @@ const pizzaController = {
     // get one pizza by id
     getPizzaById({ params }, res) {
     // Mongoose find one method
-      Pizza.findOne({ _id: params.id })
+        Pizza.findOne({ _id: params.id })
+        .populate({
+        path: 'comments',
+        select: '-__v'
+        })
+        .select('-__v')
         .then(dbPizzaData => {
-          // If no pizza is found, send 404
-          if (!dbPizzaData) {
+        if (!dbPizzaData) {
             res.status(404).json({ message: 'No pizza found with this id!' });
             return;
-          }
-          res.json(dbPizzaData);
+        }
+        res.json(dbPizzaData);
         })
         .catch(err => {
-          console.log(err);
-          res.status(400).json(err);
+        console.log(err);
+        res.status(400).json(err);
         });
     },
 
