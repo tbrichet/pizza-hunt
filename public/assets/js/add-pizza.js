@@ -67,6 +67,8 @@ const handlePizzaSubmit = event => {
     })
     .catch(err => {
       console.log(err);
+      // Save record to idb if no internet connection
+      saveRecord(formData);
     });
 };
 
